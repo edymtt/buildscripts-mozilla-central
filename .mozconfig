@@ -1,0 +1,4 @@
+mk_add_options MOZ_MAKE_FLAGS=-j1
+ac_add_options --disable-tests
+mk_add_options MOZ_OBJDIR=@TOPSRCDIR@/obj-firefox
+#ac_add_options --with-ccache=/usr/local/bin/ccache
