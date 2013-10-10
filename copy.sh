@@ -9,18 +9,16 @@ do
     hdiutil attach "$IMAGE" | {
     	while read REPLY; do
         echo $REPLY
-        echo `expr index "$REPLY" expected`
-        if [[ `expr index "$REPLY" expected` != 0 ]]
-        	then
-        	continue
-        else
+        echo `echo $REPLY | sed "/expected/d" | wc -l`
+        if [[ `echo $REPLY | sed "/expected/d" | wc -l | sed 's/^ *//g'` != 0 ]]
+            then
          if [[ $DEVPATH == "" ]]
          	then
-         	DEVPATH = `echo $REPLY | awk "print $0"`
+         	DEVPATH=`echo $REPLY | awk '{print $1}'`
          fi
          if [[ $MOUNTPOINT == "" ]]
          	then
-         	MOUNTPOINT = `echo $REPLY | awk "print $3"`
+         	MOUNTPOINT=`echo $REPLY | awk '{print $3}'`
          fi
 
          if [[ $MOUNTPOINT != "" && $DEVPATH != "" ]]
@@ -28,8 +26,8 @@ do
          	break
          fi
         fi
-    done
-}
+    done;
+
 
     if [[ $MOUNTPOINT == "" || $DEVPATH == "" ]]
     	then
@@ -37,12 +35,13 @@ do
     	exit 1
     fi
 	
-	if [ -e $MOUNTPOINT]
+	if [ -e $MOUNTPOINT ]
 		then
 	  cp -av $MOUNTPOINT/Nightly.app ~/Applications/
 
 	  hdiutil detach $DEVPATH
 	fi
+}
 done
 
 #cp -av obj-firefox/dist/Nightly.app ~/Applications/
